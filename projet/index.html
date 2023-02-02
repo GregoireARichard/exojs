@@ -53,6 +53,7 @@
     </div>
     <script>
 
+        //1
 
         let elInput = document.querySelector('.post');
         let elSubmit = document.querySelector('.submitPost');
@@ -61,19 +62,11 @@
         let postSection = document.querySelector('.postDiv');
         let input =  document.querySelector('.inputPost');
         let postsDiv = document.querySelector('.postDiv');
-        let textNumber = document.querySelector('.numberResult');
-        let textAverage = document.querySelector('.numberAverage');
-        let submitNumber = document.querySelector('.submitNumber')
-
 
         let value = "0"
         let dataArray = [];
         let post =[];
         let titlePosts = [];
-        let count = 0;
-        let total = 0;
-        let avg = 0;
-
 
         const getPosts = () => {
             fetch('https://jsonplaceholder.typicode.com/posts')
@@ -87,9 +80,6 @@
             dataArray = data
         }
         
-
-
-
 
         const onClick = () => {
             value = input.value
@@ -125,8 +115,18 @@
             })
         }
 
-        
 
+
+        //2
+
+        let textNumber = document.querySelector('.numberResult');
+        let textAverage = document.querySelector('.numberAverage');
+        let submitNumber = document.querySelector('.submitNumber')
+
+        let count = 0;
+        let total = 0;
+        let avg = 0;
+        
         const onClickNumber = () => {
             count=0
             total = 0
@@ -134,7 +134,6 @@
             textNumber.innerHTML = "";
             displayNumber();
         }
-
 
         const displayNumber = () => {
             titlePosts.map((element) => {
@@ -157,59 +156,6 @@
         }
         submitNumber.addEventListener("click", onClickNumber)
 
-
-
-        
-        // 1.
-        // const getUsers = () => {
-        //     fetch('https://jsonplaceholder.typicode.com/users')
-        //     .then((response) => response.json())
-        //     .then((json) => displayData(json));
-        // }
-
-        // getUsers();
-
-        // const displayData = (data) => {
-        //     data.map((element)=> {
-        //         const option = document.createElement('option');
-        //         option.innerHTML = element.name;
-        //         option.value = element.id;
-        //         userSelect.appendChild(option);
-
-        //         option.addEventListener('click', (e)=> {
-                    
-        //         })
-        //     })   
-        // }
-
-
-
-        // let nbrOfPost = 0;
-        // elSubmit.addEventListener('click', (e) => {
-        //     nbrOfPost = elInput.value
-        //     for(i=0; i<= nbr_post; i ++ ){
-        //         const post = document.createElement('div.posts')
-        //         post.innerHTML = posts_tab[i].title
-        //         postSection.appendChild(post)        
-
-        //     }
-        // })
-        
-
-        
-        // let value = '';
-
-        // function eventInput(event) {
-           
-        // }
-
-        // console.log(elInput.addEventListener('input', eventInput));
-
-        // 2.
-        // function onClick(event) {
-        // }
-
-        // elSubmit.addEventListener('click', onClick);
     </script>
 </body>
 </html>
