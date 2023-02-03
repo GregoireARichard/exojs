@@ -24,14 +24,14 @@
     <div class="h-100 container">
         <div class="h-25 d-flex justify-content-center align-items-center">
             <div class="w-75">
-                <h1 class="text-center pb-2" id="cesear-1">Profil de l'utilisateur</h1>
+                <h1 class="text-node text-center pb-2">Profil de l'utilisateur</h1>
                 <div class="form">
                     <div class="mb-3">
-                        <label for="exampleInputEmail1" id="cesear-2" class="form-label">Identifiant de l'utilisateur</label>
+                        <label for="exampleInputEmail1" class="text-node form-label">Identifiant de l'utilisateur</label>
                         <select class="form-select" id="user-selector" aria-label="Default select example">
-                            <option selected id="cesear-3">Sélectionnez un utilisateur</option>
+                            <option selected class="text-node">Sélectionnez un utilisateur</option>
                         </select>
-                        <div id="cesear-4" class="form-text text-light">Sélectionnez un utilisateur</div>
+                        <div class="text-node form-text text-light">Sélectionnez un utilisateur</div>
                     </div>
                 </div>
             </div>
@@ -39,22 +39,22 @@
         <div class="h-75">
             <div class="h-75 row m-0">
                 <div class="col-8 m-0 p-1 mh-100 overflow-auto" id="post-viewer">
-                    <p class='text-light'>Posts</p>
+                    <p class='text-node text-light'>Posts</p>
                 </div>
                 <div class="col-4 p-1 mh-100">
                     <div class="third m-0" id="frequent-occurences">
-                        <p class='text-light'>Occurences</p>
+                        <p class='text-node text-light'>Occurences</p>
                     </div>
                     <div class="third d-flex align-items-center m-0" id="todo-figures">
-                        <p class='text-light'>Figures</p>
+                        <p class='text-node text-light'>Figures</p>
                     </div>
                     <div class="third d-flex align-items-center m-0 " id="distance">
-                        <p class='text-light'>Todo list</p>
+                        <p class='text-node text-light'>Todo list</p>
                     </div>
                 </div>
             </div>
             <div class="h-25 d-flex justify-content-center align-items-center">
-                <button class="btn btn-primary btn-lg w-100" id="cesear" type="button">Cesear!</button>
+                <button class="btn btn-primary btn-lg w-100" id="cesear" value="1" type="button">Cesear!</button>
             </div>
         </div>
     </div>
@@ -68,6 +68,7 @@
 
         const userOption = (user) => {
             const node = document.createElement("option");
+            addClasses(node, "text-node");
             node.setAttribute("value", JSON.stringify(user));
             const textnode = document.createTextNode(user.name);
             node.appendChild(textnode);
@@ -82,11 +83,11 @@
             const cardBody = document.createElement("div");
             addClasses(cardBody, "card-body");
             const cardTitle = document.createElement("h5");
-            addClasses(cardTitle, "text-capitalize card-title text-truncate");
+            addClasses(cardTitle, "text-node text-capitalize card-title text-truncate");
             const cardText = document.createElement("p");
-            addClasses(cardText, "text-capitalize card-subtitle text-truncate");
+            addClasses(cardText, "text-node text-capitalize card-subtitle text-truncate");
             const cardComment = document.createElement("p");
-            addClasses(cardComment, "text-lowercase text-end m-0");
+            addClasses(cardComment, "text-node text-lowercase text-end m-0");
             card.setAttribute("postId", postId);
             const textTitle = document.createTextNode(title);
             const textText = document.createTextNode(text);
@@ -94,7 +95,9 @@
             cardTitle.appendChild(textTitle);
             cardText.appendChild(textText);
             cardComment.appendChild(textComments);
-            cardBody.appendChild(cardTitle).appendChild(cardText).appendChild(cardComment);
+            cardBody.appendChild(cardTitle)
+            cardBody.appendChild(cardText)
+            cardBody.appendChild(cardComment);
             card.appendChild(cardBody);
             return card;
         };
@@ -103,7 +106,7 @@
             const card = document.createElement("div");
             addClasses(card, "card bg-dark");
             const cardBody = document.createElement("div");
-            addClasses(cardBody, "card-body");
+            addClasses(cardBody, "text-node card-body");
             const textBody = document.createTextNode(word + ` : ${number}`);
             cardBody.appendChild(textBody)
             card.appendChild(cardBody);
@@ -112,7 +115,7 @@
 
         const singleTodo = (figure, text) => {
             const col = document.createElement("div");
-            addClasses(col, "col d-flex justify-content-center align-items-center");
+            addClasses(col, "text-node col d-flex justify-content-center align-items-center");
             const textNode = document.createTextNode(figure + ` : ${text}`);
             col.appendChild(textNode);
             return col;
@@ -215,11 +218,13 @@
         }
 
         cesearButton.addEventListener("click", (e) => {
-            const toGet = ["cesear-1", "cesear-2", "cesear-3", "cesear-4"];
-            toGet.forEach(id => {
-                const gotten = document.querySelector(`#${id}`);
-                gotten.innerHTML = cesear(3, gotten.innerHTML);
-            });
+            document.querySelectorAll(".text-node")
+                .forEach(e => {
+                    e.textContent = cesearButton.value === "0" ? cesear(3, e.textContent) : cesear(-3, e.textContent)
+                });
+
+            cesearButton.setAttribute("value", cesearButton.value === "0" ? "1" : "0");
+            cesearButton.textContent = cesearButton.value === "0" ? "Augustus!" : "Cesear!";
         })
     </script>
 </body>
