@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+    <title>Profil Utilisateur</title>
+    <style>
+        body {
+            height: 100vh;
+        }
+        
+        .third {
+            height: 33.33333%;
+            max-height: 33.33333%;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+
+<body class="bg-dark text-light d-flex justify-content-center">
+    <div class="h-100 container">
+        <div class="h-25 d-flex justify-content-center align-items-center">
+            <div class="w-75">
+                <h1 class="text-center pb-2" id="cesear-1">Profil de l'utilisateur</h1>
+                <div class="form">
+                    <div class="mb-3">
+                        <label for="exampleInputEmail1" id="cesear-2" class="form-label">Identifiant de l'utilisateur</label>
+                        <select class="form-select" id="user-selector" aria-label="Default select example">
+                            <option selected id="cesear-3">Sélectionnez un utilisateur</option>
+                        </select>
+                        <div id="cesear-4" class="form-text text-light">Sélectionnez un utilisateur</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="h-75">
+            <div class="h-75 row m-0">
+                <div class="col-8 m-0 p-1 mh-100 overflow-auto" id="post-viewer">
+                    <p class='text-light'>Posts</p>
+                </div>
+                <div class="col-4 p-1 mh-100">
+                    <div class="third m-0" id="frequent-occurences">
+                        <p class='text-light'>Occurences</p>
+                    </div>
+                    <div class="third d-flex align-items-center m-0" id="todo-figures">
+                        <p class='text-light'>Figures</p>
+                    </div>
+                    <div class="third d-flex align-items-center m-0 " id="distance">
+                        <p class='text-light'>Todo list</p>
+                    </div>
+                </div>
+            </div>
+            <div class="h-25 d-flex justify-content-center align-items-center">
+                <button class="btn btn-primary btn-lg w-100" id="cesear" type="button">Cesear!</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        let elUserSelector = document.querySelector('#user-selector');
+        let elPostViewer = document.querySelector('#post-viewer');
+        let elOccurenceViewer = document.querySelector('#frequent-occurences');
+        let elTodoFigureViewer = document.querySelector('#todo-figures');
+        let elDistanceViewer = document.querySelector('#distance');
+        let cesearButton = document.querySelector('#cesear');
+
+        const userOption = (user) => {
+            const node = document.createElement("option");
+            node.setAttribute("value", JSON.stringify(user));
+            const textnode = document.createTextNode(user.name);
+            node.appendChild(textnode);
+            return node;
+        };
+
+        const addClasses = (element, classString) => classString.split(" ").forEach(single => element.classList.add(single));
+
+        const singlePost = (postId, title, text, comments) => {
+            const card = document.createElement("div");
+            addClasses(card, "card mb-1 bg-dark");
+            const cardBody = document.createElement("div");
+            addClasses(cardBody, "card-body");
+            const cardTitle = document.createElement("h5");
+            addClasses(cardTitle, "text-capitalize card-title text-truncate");
+            const cardText = document.createElement("p");
+            addClasses(cardText, "text-capitalize card-subtitle text-truncate");
+            const cardComment = document.createElement("p");
+            addClasses(cardComment, "text-lowercase text-end m-0");
+            card.setAttribute("postId", postId);
+            const textTitle = document.createTextNode(title);
+            const textText = document.createTextNode(text);
+            const textComments = document.createTextNode(`${comments} comment(s)`);
+            cardTitle.appendChild(textTitle);
+            cardText.appendChild(textText);
+            cardComment.appendChild(textComments);
+            cardBody.appendChild(cardTitle).appendChild(cardText).appendChild(cardComment);
+            card.appendChild(cardBody);
+            return card;
+        };
+
+        const singleOccurence = (word, number) => {
+            const card = document.createElement("div");
+            addClasses(card, "card bg-dark");
+            const cardBody = document.createElement("div");
+            addClasses(cardBody, "card-body");
+            const textBody = document.createTextNode(word + ` : ${number}`);
+            cardBody.appendChild(textBody)
+            card.appendChild(cardBody);
+            return card;
+        };
+
+        const singleTodo = (figure, text) => {
+            const col = document.createElement("div");
+            addClasses(col, "col d-flex justify-content-center align-items-center");
+            const textNode = document.createTextNode(figure + ` : ${text}`);
+            col.appendChild(textNode);
+            return col;
+        };
+
+        const extractFigures = (todos) => {
+            const complete = todos.filter(e => e.completed === true).length;
+            return {
+                complete,
+                notYet: todos.length - complete
+            };
+        }
+
+        const getComments = async(post) => {
+            return await fetch(`https://jsonplaceholder.typicode.com/comments?postId=${post.id}`)
+                .then(response => response.json())
+                .then(comments => {
+                    elPostViewer.appendChild(singlePost(post.id, post.title, post.body, comments.length))
+                });
+        }
+
+        const getPosts = async(user) => {
+            return await fetch(`https://jsonplaceholder.typicode.com/posts?userId=${user.id}`)
+                .then(response => response.json())
+                .then(json => {
+                    json.forEach(post => getComments(post))
+                    const e = json.map(e => e.title.split(" ").concat(e.body.split(" "))).flat();
+                    const result = [];
+                    occurenceCounter(e, result);
+                    result.sort((a, b) => b[1] - a[1]);
+                    result.length = 10;
+                    elOccurenceViewer.innerHTML = "";
+                    result.forEach(o => elOccurenceViewer.appendChild(singleOccurence(o[0], o[1])))
+                });
+        };
+
+        const getTodos = async(user) => {
+            return await fetch(`https://jsonplaceholder.typicode.com/todos?userId=${user.id}`)
+                .then(response => response.json())
+                .then(json => {
+                    const figures = extractFigures(json);
+                    elTodoFigureViewer.innerHTML = "";
+                    elTodoFigureViewer.appendChild(singleTodo(figures.complete, "tâches terminées"));
+                    elTodoFigureViewer.appendChild(singleTodo(figures.notYet, "tâches en cours"));
+                });
+        };
+
+        const occurenceCounter = (data, results) => {
+            data.forEach(number => {
+                const index = results.findIndex(set => set[0] == number)
+                if (index !== -1) return results[index] = [number, results[index][1] + 1];
+                results.push([number, 1]);
+            });
+        };
+
+        const distance = (A, B) => Math.floor(Math.sqrt((A[0] - B[0]) ** 2 + (A[1] - B[1]) ** 2) * 100) / 100;
+
+        fetch('https://jsonplaceholder.typicode.com/users')
+            .then(response => response.json())
+            .then((json) => {
+                json.forEach(user => elUserSelector.appendChild(userOption(user)))
+                elUserSelector.addEventListener("change", function() {
+                    elPostViewer.innerHTML = "";
+                    const value = JSON.parse(this.value);
+                    getPosts(value);
+                    getTodos(value);
+
+                    const otherUsers = json.filter(e => e.id !== value.id)
+                    const ret = otherUsers.reduce((previousValue, currentValue) => {
+                        return distance(
+                                [value.address.geo.lng, value.address.geo.lat], [currentValue.address.geo.lng, currentValue.address.geo.lat]
+                            ) < distance(
+                                [value.address.geo.lng, value.address.geo.lat], [previousValue.address.geo.lng, previousValue.address.geo.lat]
+                            ) ?
+                            currentValue :
+                            previousValue;
+                    });
+
+                    elOccurenceViewer.innerHTML = "<p class='text-light'>Occurences</p>";
+                    elTodoFigureViewer.innerHTML = "<p class='text-light'>Figures</p>";
+                    elDistanceViewer.innerHTML = "";
+                    elDistanceViewer.appendChild(singleTodo(ret.name, ` (${ret.address.city}) est la personne la plus proche`));
+                });
+            });
+
+        const char_rot = (number, char) => String.fromCharCode(char.charCodeAt(0) + number);
+
+        const cesear = (number, phrase) => {
+            const split = phrase.split("");
+            let returned = "";
+            split.forEach(letter => returned += char_rot(number, letter));
+            return returned;
+        }
+
+        const augustus = (number, mashed) => {
+            const split = mashed.split("");
+            let returned = "";
+            split.forEach(letter => returned += char_rot(-number, letter));
+            return returned;
+        }
+
+        cesearButton.addEventListener("click", (e) => {
+            const toGet = ["cesear-1", "cesear-2", "cesear-3", "cesear-4"];
+            toGet.forEach(id => {
+                const gotten = document.querySelector(`#${id}`);
+                gotten.innerHTML = cesear(3, gotten.innerHTML);
+            });
+        })
+    </script>
+</body>
+
+</html>
