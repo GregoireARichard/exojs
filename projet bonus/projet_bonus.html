@@ -210,13 +210,6 @@
             return returned;
         }
 
-        const augustus = (number, mashed) => {
-            const split = mashed.split("");
-            let returned = "";
-            split.forEach(letter => returned += char_rot(-number, letter));
-            return returned;
-        }
-
         cesearButton.addEventListener("click", (e) => {
             document.querySelectorAll(".text-node")
                 .forEach(e => {
